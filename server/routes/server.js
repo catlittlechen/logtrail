@@ -54,6 +54,13 @@ function convertToClientFormat(selectedConfig, esResponse) {
     event.timestamp = get(source, selectedConfig.fields.mapping.timestamp);
     event.hostname = get(source, selectedConfig.fields.mapping.hostname);
     event.program = get(source, selectedConfig.fields.mapping.program);
+    // TODO
+    delete source[selected_config.fields.mapping['timestamp']];
+    delete source[selected_config.fields.mapping['hostname']];
+    delete source[selected_config.fields.mapping['program']];
+    event['message'] = JSON.stringify(source);
+    clientResponse.push(event);
+    continue;
 
     //Calculate message color, if configured
     if (selectedConfig.color_mapping && selectedConfig.color_mapping.field) {
