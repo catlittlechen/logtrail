@@ -58,7 +58,7 @@ function convertToClientFormat(selectedConfig, esResponse) {
     delete source[selected_config.fields.mapping['timestamp']];
     delete source[selected_config.fields.mapping['hostname']];
     delete source[selected_config.fields.mapping['program']];
-    event['message'] = JSON.stringify(source);
+    event['message'] = JSON.stringify(source, Object.keys(source).sort());
     clientResponse.push(event);
     continue;
 
