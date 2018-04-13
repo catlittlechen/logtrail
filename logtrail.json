@@ -1,7 +1,7 @@
 {
   "version" : 1,
   "index_patterns" : [
-    {      
+    {
       "es": {
         "default_index": "filebeat-*"
       },
@@ -20,12 +20,13 @@
             "program": "source",
             "message": "message"
         },
+        "json_format": true,
         "message_format": "{{{message}}}"
       },
       "color_mapping" : {
       }
     },
-    {      
+    {
       "es": {
         "default_index": "logstash-zookeeper"
       },
@@ -44,10 +45,11 @@
             "program": "logger_name",
             "message": "log_message"
         },
+        "json_format": true,
         "message_format": "{{{log_message}}}"
       },
       "color_mapping" : {
       }
-    }  
+    }
   ]
 }

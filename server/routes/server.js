@@ -54,47 +54,47 @@ function convertToClientFormat(selectedConfig, esResponse) {
     event.timestamp = get(source, selectedConfig.fields.mapping.timestamp);
     event.hostname = get(source, selectedConfig.fields.mapping.hostname);
     event.program = get(source, selectedConfig.fields.mapping.program);
-    // TODO
-    delete source[selected_config.fields.mapping['timestamp']];
-    delete source[selected_config.fields.mapping['hostname']];
-    delete source[selected_config.fields.mapping['program']];
-    event['message'] = JSON.stringify(source, Object.keys(source).sort());
-    clientResponse.push(event);
-    continue;
-
-    //Calculate message color, if configured
-    if (selectedConfig.color_mapping && selectedConfig.color_mapping.field) {
-      var colorField = get(source, selectedConfig.color_mapping.field);
-      var color = selectedConfig.color_mapping.mapping[colorField];
-      if (color) {
-        event.color =  color;
-      }
-    }
-
-    //Change the source['message'] to highlighter text if available
-    if (hits[i].highlight) {
-      var get = require('lodash.get');
-      var set = require('lodash.set');
-      var withHighlights = get(hits[i].highlight, [selectedConfig.fields.mapping.message,0]);
-      set(source, selectedConfig.fields.mapping.message, withHighlights);
-      source[selectedConfig.fields.mapping.message] = hits[i].highlight[selectedConfig.fields.mapping.message][0];
-    }
-    var message = source[selectedConfig.fields.mapping.message];
-    //sanitize html
-    var escape = require('lodash.escape');
-    message = escape(message);
-    //if highlight is present then replace pre and post tag with html
-    if (hits[i].highlight) {
-      message = message.replace(/logtrail.highlight.pre_tag/g,'<span class="highlight">');
-      message = message.replace(/logtrail.highlight.post_tag/g,'</span>');
-    }
-    source[selectedConfig.fields.mapping.message] = message;
-
-    //If the user has specified a custom format for message field
-    if (messageFormat) {
-      event.message = template(source);
+    if (selectedConfig.fields.json_format) {
+      // TODO
+      delete source[selected_config.fields.mapping['timestamp']];
+      delete source[selected_config.fields.mapping['hostname']];
+      delete source[selected_config.fields.mapping['program']];
+      event.message = JSON.stringify(source, Object.keys(source).sort());
     } else {
-      event.message = message;
+      //Calculate message color, if configured
+      if (selectedConfig.color_mapping && selectedConfig.color_mapping.field) {
+        var colorField = get(source, selectedConfig.color_mapping.field);
+        var color = selectedConfig.color_mapping.mapping[colorField];
+        if (color) {
+          event.color =  color;
+        }
+      }
+
+      //Change the source['message'] to highlighter text if available
+      if (hits[i].highlight) {
+        var get = require('lodash.get');
+        var set = require('lodash.set');
+        var withHighlights = get(hits[i].highlight, [selectedConfig.fields.mapping.message,0]);
+        set(source, selectedConfig.fields.mapping.message, withHighlights);
+        source[selectedConfig.fields.mapping.message] = hits[i].highlight[selectedConfig.fields.mapping.message][0];
+      }
+      var message = source[selectedConfig.fields.mapping.message];
+      //sanitize html
+      var escape = require('lodash.escape');
+      message = escape(message);
+      //if highlight is present then replace pre and post tag with html
+      if (hits[i].highlight) {
+        message = message.replace(/logtrail.highlight.pre_tag/g,'<span class="highlight">');
+        message = message.replace(/logtrail.highlight.post_tag/g,'</span>');
+      }
+      source[selectedConfig.fields.mapping.message] = message;
+
+      //If the user has specified a custom format for message field
+      if (messageFormat) {
+        event.message = template(source);
+      } else {
+        event.message = message;
+      }
     }
     clientResponse.push(event);
   }
