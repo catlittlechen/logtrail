@@ -1,6 +1,23 @@
 function initServerContext(server, context) {
   //by default use local config
+  var fs=require('fs');
+  var path=require('path');
+
+  var fileDirectory = path.join(__dirname, '../../conf/');
   var config = require('../../logtrail.json');
+
+  if (fs.existsSync(fileDirectory)) {
+    var files = fs.readdirSync(fileDirectory);
+    files.forEach(function (filename) {
+        filename = path.join(fileDirectory, filename);
+  	    var data = require(filename);
+        config.index_patterns.push(data);
+    });
+  }
+  else {
+      console.log(fileDirectory + "  Not Found!");
+  }
+
   context.config = config;
   //try loading from elasticsearch
   loadConfigFromES(server, context);
